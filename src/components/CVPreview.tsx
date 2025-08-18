@@ -85,6 +85,8 @@ const CVPreview = ({
         return { ...dynamicStyles, headerStyle: `${baseStyle} cv-header-executive` };
       case "minimal":
         return { ...dynamicStyles, headerStyle: `${baseStyle} cv-header-minimal` };
+      case "modern-bullets":
+        return { ...dynamicStyles, headerStyle: `${baseStyle} cv-header-modern-bullets` };
       default:
         return { ...dynamicStyles, headerStyle: baseStyle };
     }
@@ -156,6 +158,7 @@ const CVPreview = ({
       .cv-header-creative { background-color: hsl(var(--template-primary)); }
       .cv-header-executive { background-color: hsl(var(--template-primary)); }
       .cv-header-minimal { border-bottom: 2px solid hsl(var(--template-primary)); }
+      .cv-header-modern-bullets { background: linear-gradient(135deg, hsl(var(--template-primary)), hsl(var(--template-accent))); }
 
       /* Page-filling ribbon as a background so it always reaches the bottom of each page */
       .cv-left-ribbon {
@@ -489,7 +492,20 @@ const CVPreview = ({
         <div className="cv-page">
           {/* Header */}
           <div className={`${template.id === "minimal" ? styles.headerStyle + " pb-6" : "pb-6"} text-center`}>
-            {template.id !== "minimal" && (
+            {template.id !== "minimal" && template.id !== "modern-bullets" && (
+              <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-6 shadow-md`}>
+                {template.hasPhoto && (
+                  <img
+                    src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
+                    alt="Profile"
+                    className="w-32 h-32 aspect-square rounded-full mx-auto object-cover object-center border-4 border-white/20 mb-4 shadow-lg flex-shrink-0"
+                  />
+                )}
+                <h1 className="text-3xl font-bold mb-2">{data.personalInfo.fullName || "Your Name"}</h1>
+                <p className="text-xl opacity-90">{data.personalInfo.jobTitle || "Your Job Title"}</p>
+              </div>
+            )}
+            {template.id === "modern-bullets" && (
               <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-6 shadow-md`}>
                 {template.hasPhoto && (
                   <img
@@ -643,22 +659,33 @@ const CVPreview = ({
               <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
                 Skills
               </h3>
-              <div className="space-y-3">
-                {data.skills.map((skill) => (
-                  <div key={skill.id}>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="font-medium">{skill.name}</span>
-                      <span className="text-sm text-muted-foreground">{skill.level}</span>
+              {template.id === "modern-bullets" ? (
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-center">
+                  {data.skills.map((skill) => (
+                    <div key={skill.id} className="flex items-center justify-center gap-2">
+                      <span className={`${styles.primaryColor} font-medium`}>•</span>
+                      <span className="font-medium text-foreground">{skill.name}</span>
                     </div>
-                    <div className="w-full bg-muted/50 rounded-full h-2">
-                      <div
-                        className={`${styles.skillBar} h-2 rounded-full transition-all duration-500`}
-                        style={{ width: `${getSkillLevel(skill.level)}%` }}
-                      />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {data.skills.map((skill) => (
+                    <div key={skill.id}>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-medium">{skill.name}</span>
+                        <span className="text-sm text-muted-foreground">{skill.level}</span>
+                      </div>
+                      <div className="w-full bg-muted/50 rounded-full h-2">
+                        <div
+                          className={`${styles.skillBar} h-2 rounded-full transition-all duration-500`}
+                          style={{ width: `${getSkillLevel(skill.level)}%` }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -752,7 +779,20 @@ const CVPreview = ({
       >
         {/* Header */}
         <div className={`${template.id === "minimal" ? styles.headerStyle + " pb-6" : "pb-6"} text-center`}>
-          {template.id !== "minimal" && (
+          {template.id !== "minimal" && template.id !== "modern-bullets" && (
+            <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-6 shadow-md`}>
+              {template.hasPhoto && (
+                <img
+                  src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
+                  alt="Profile"
+                  className="w-32 h-32 aspect-square rounded-full mx-auto object-cover object-center border-4 border-white/20 mb-4 shadow-lg flex-shrink-0"
+                />
+              )}
+              <h1 className="text-3xl font-bold mb-2">{data.personalInfo.fullName || "Your Name"}</h1>
+              <p className="text-xl opacity-90">{data.personalInfo.jobTitle || "Your Job Title"}</p>
+            </div>
+          )}
+          {template.id === "modern-bullets" && (
             <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-6 shadow-md`}>
               {template.hasPhoto && (
                 <img
@@ -906,22 +946,33 @@ const CVPreview = ({
             <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
               Skills
             </h3>
-            <div className="space-y-3">
-              {data.skills.map((skill) => (
-                <div key={skill.id}>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-medium">{skill.name}</span>
-                    <span className="text-sm text-muted-foreground">{skill.level}</span>
+            {template.id === "modern-bullets" ? (
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-center">
+                {data.skills.map((skill) => (
+                  <div key={skill.id} className="flex items-center justify-center gap-2">
+                    <span className={`${styles.primaryColor} font-medium`}>•</span>
+                    <span className="font-medium text-foreground">{skill.name}</span>
                   </div>
-                  <div className="w-full bg-muted/50 rounded-full h-2">
-                    <div
-                      className={`${styles.skillBar} h-2 rounded-full transition-all duration-500`}
-                      style={{ width: `${getSkillLevel(skill.level)}%` }}
-                    />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {data.skills.map((skill) => (
+                  <div key={skill.id}>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="font-medium">{skill.name}</span>
+                      <span className="text-sm text-muted-foreground">{skill.level}</span>
+                    </div>
+                    <div className="w-full bg-muted/50 rounded-full h-2">
+                      <div
+                        className={`${styles.skillBar} h-2 rounded-full transition-all duration-500`}
+                        style={{ width: `${getSkillLevel(skill.level)}%` }}
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

@@ -16,7 +16,8 @@ const templates: CVTemplate[] = [
   { id: "professional", name: "Professional Modern", description: "", features: [], hasPhoto: true, columns: 2, color: "blue" },
   { id: "creative",     name: "Creative Portfolio",   description: "", features: [], hasPhoto: true, columns: 1, color: "purple" },
   { id: "executive",    name: "Executive Elite",      description: "", features: [], hasPhoto: true, columns: 2, color: "green" },
-  { id: "minimal",      name: "Minimalist Clean",     description: "", features: [], hasPhoto: false, columns: 1, color: "gray" }
+  { id: "minimal",      name: "Minimalist Clean",     description: "", features: [], hasPhoto: false, columns: 1, color: "gray" },
+  { id: "modern-bullets", name: "Modern Bullets",    description: "", features: [], hasPhoto: true, columns: 1, color: "slate" }
 ];
 
 // Utility function to migrate old array format to new HTML format
