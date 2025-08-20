@@ -491,7 +491,7 @@ const CVPreview = ({
         {styleBlock}
         <div className="cv-page">
           {/* Header */}
-          <div className={`${template.id === "minimal" ? styles.headerStyle + " pb-4" : "pb-4"} text-center`}>
+          <div className={`${template.id === "minimal" ? styles.headerStyle + " pb-2" : "pb-2"} text-center`}>
             {template.id !== "minimal" && template.id !== "modern-bullets" && (
               <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-4 shadow-md`}>
                 {template.hasPhoto && (
