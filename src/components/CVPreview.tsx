@@ -154,6 +154,7 @@ const CVPreview = ({
       .cv-header-minimal { border-bottom: 2px solid hsl(var(--template-primary)); }
       .cv-header-modern-bullets { background: linear-gradient(135deg, hsl(var(--template-primary)), hsl(var(--template-accent))); }
 
+      /* Page-filling ribbon as a background so it always reaches the bottom of each page */
       .cv-left-ribbon {
         background:
           linear-gradient(
@@ -168,16 +169,20 @@ const CVPreview = ({
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
+
+      /* Sidebar itself remains transparent; background paints the ribbon */
       .cv-sidebar-bg { background-color: transparent; }
     `}</style>
   );
 
   // ---------- TWO COLUMN ----------
   if (template.columns === 2) {
+    // Fixed A4 (thumbnails) vs unbounded (live preview + export)
     const wrapperClass = unbounded
       ? `${isPDF ? "bg-white" : "bg-background border border-border rounded-lg shadow-card"} cv-left-ribbon ${isPreview ? "text-xs" : "text-sm"}`
       : `cv-a4 ${isPDF ? "bg-white" : "bg-background"} ${isPDF ? "" : "border border-border rounded-lg shadow-card"} overflow-hidden ${isPreview ? "text-xs" : "text-sm"} cv-left-ribbon`;
 
+    // For unbounded, set width but not height so it can grow and paginate.
     const sizeStyle: CSSProperties = unbounded
       ? (isPDF ? { width: "210mm" } : { width: "794px" })
       : {};
@@ -186,11 +191,12 @@ const CVPreview = ({
       <div ref={wrapperRef} className={wrapperClass} style={{ ...colorVars, ...sizeStyle }}>
         {styleBlock}
 
+        {/* NOTE: in unbounded mode we must NOT force h-full on this inner wrapper */}
         <div
           ref={unbounded ? innerRef : undefined}
           className={unbounded ? "flex" : "flex h-full"}
         >
-          {/* Left Sidebar */}
+          {/* Left Sidebar (transparent; ribbon comes from page background) */}
           <div className={`w-1/3 p-6 space-y-6`}>
             {template.hasPhoto && (
               <div className="text-center">
@@ -335,9 +341,9 @@ const CVPreview = ({
           {/* Right Content */}
           <div className="flex-1 p-6 space-y-6">
             {/* Header */}
-            <div className={`${template.id === "minimal" ? styles.headerStyle : ""}`}>
+            <div className={`${template.id === "minimal" ? styles.headerStyle + " pb-4" : "border-b border-border pb-4"}`}>
               {template.id !== "minimal" && (
-                <div className={`${styles.headerStyle} text-white p-4 rounded-lg shadow-md`}>
+                <div className={`${styles.headerStyle} text-white p-4 rounded-lg mb-4 shadow-md`}>
                   <h1 className="text-2xl font-bold mb-1">{data.personalInfo.fullName || "Your Name"}</h1>
                   <p className="text-lg opacity-90">{data.personalInfo.jobTitle || "Your Job Title"}</p>
                 </div>
@@ -478,9 +484,9 @@ const CVPreview = ({
       <>
         {styleBlock}
         <div className="cv-page">
-          {/* Wrap ALL sections to enforce consistent spacing */}
+          {/* Enforce consistent vertical rhythm across header + sections */}
           <div className="space-y-6">
-            {/* Header (no extra bottom margin/padding) */}
+            {/* Header (no extra pb/mb here) */}
             <div className={`${template.id === "minimal" ? styles.headerStyle : ""} text-center`}>
               {template.id !== "minimal" && template.id !== "modern-bullets" && (
                 <div className={`${styles.headerStyle} text-white p-6 rounded-lg shadow-md`}>
@@ -525,7 +531,7 @@ const CVPreview = ({
               )}
             </div>
 
-            {/* Contact Information */}
+            {/* Contact Information (removed mb-8) */}
             <div className="avoid-break">
               <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
                 Contact Information
@@ -750,11 +756,12 @@ const CVPreview = ({
     return <div style={colorVars}>{content}</div>;
   }
 
-  // Non-PDF (unbounded mode or fixed A4 preview)
+  // ---------- SINGLE COLUMN (non-PDF: unbounded/fixed preview) ----------
   const wrapperClass = unbounded
     ? `${isPDF ? "bg-white" : "bg-background border border-border rounded-lg shadow-card"} ${isPreview ? "text-xs" : "text-sm"}`
     : `cv-a4 ${isPDF ? "bg-white" : "bg-background"} ${isPDF ? "" : "border border-border rounded-lg shadow-card"} overflow-hidden ${isPreview ? "text-xs" : "text-sm"}`;
 
+  // For unbounded, set width but not height so it can grow.
   const sizeStyle: CSSProperties = unbounded
     ? (isPDF ? { width: "210mm" } : { width: "794px" })
     : {};
@@ -767,7 +774,7 @@ const CVPreview = ({
         ref={unbounded ? innerRef : undefined}
         className="p-8 space-y-6"
       >
-        {/* Header (no pb on wrapper; no mb on card) */}
+        {/* Header (no extra pb on wrapper; no mb on card) */}
         <div className={`${template.id === "minimal" ? styles.headerStyle : ""} text-center`}>
           {template.id !== "minimal" && template.id !== "modern-bullets" && (
             <div className={`${styles.headerStyle} text-white p-6 rounded-lg shadow-md`}>
@@ -1029,31 +1036,6 @@ const CVPreview = ({
             </div>
           </div>
         )}
-      </div>
-      </>
-    );
-
-    return <div style={colorVars}>{content}</div>;
-  }
-
-  // Non-PDF single-column (preview/unbounded)
-  const wrapperClass = unbounded
-    ? `${isPDF ? "bg-white" : "bg-background border border-border rounded-lg shadow-card"} ${isPreview ? "text-xs" : "text-sm"}`
-    : `cv-a4 ${isPDF ? "bg-white" : "bg-background"} ${isPDF ? "" : "border border-border rounded-lg shadow-card"} overflow-hidden ${isPreview ? "text-xs" : "text-sm"}`;
-
-  const sizeStyle: CSSProperties = unbounded
-    ? (isPDF ? { width: "210mm" } : { width: "794px" })
-    : {};
-
-  return (
-    <div ref={wrapperRef} className={wrapperClass} style={{ ...colorVars, ...sizeStyle }}>
-      {styleBlock}
-      
-      <div
-        ref={unbounded ? innerRef : undefined}
-        className="p-8 space-y-6"
-      >
-        {/* Header (already updated above) is included earlier in this return */}
       </div>
     </div>
   );
