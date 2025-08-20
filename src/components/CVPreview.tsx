@@ -491,9 +491,9 @@ const CVPreview = ({
         {styleBlock}
         <div className="cv-page">
           {/* Header */}
-          <div className={`${template.id === "minimal" ? styles.headerStyle + " pb-6" : "pb-6"} text-center`}>
+          <div className={`${template.id === "minimal" ? styles.headerStyle + " pb-4" : "pb-4"} text-center`}>
             {template.id !== "minimal" && template.id !== "modern-bullets" && (
-              <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-6 shadow-md`}>
+              <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-4 shadow-md`}>
                 {template.hasPhoto && (
                   <img
                     src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
@@ -506,7 +506,7 @@ const CVPreview = ({
               </div>
             )}
             {template.id === "modern-bullets" && (
-              <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-6 shadow-md`}>
+              <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-4 shadow-md`}>
                 {template.hasPhoto && (
                   <img
                     src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
@@ -778,9 +778,9 @@ const CVPreview = ({
         className="p-8 space-y-6"
       >
         {/* Header */}
-        <div className={`${template.id === "minimal" ? styles.headerStyle + " pb-6" : "pb-6"} text-center`}>
+        <div className={`${template.id === "minimal" ? styles.headerStyle + " pb-4" : "pb-4"} text-center`}>
           {template.id !== "minimal" && template.id !== "modern-bullets" && (
-            <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-6 shadow-md`}>
+            <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-4 shadow-md`}>
               {template.hasPhoto && (
                 <img
                   src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
@@ -793,7 +793,7 @@ const CVPreview = ({
             </div>
           )}
           {template.id === "modern-bullets" && (
-            <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-6 shadow-md`}>
+            <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-4 shadow-md`}>
               {template.hasPhoto && (
                 <img
                   src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
