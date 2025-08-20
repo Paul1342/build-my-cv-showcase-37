@@ -118,12 +118,18 @@ const CVPreview = ({
     };
 
     const pageHeightPx = isPDF ? mmToPx(297) : 1123; // A4 height
+    // small tolerance so tiny overflow doesn't create an extra page
     const EPS = 8; // px
 
     const snap = () => {
+      // True content height (not affected by parent's minHeight)
       const contentH = inner.scrollHeight;
+
+      // Use a tolerant calculation that requires >EPS extra content to create a new page
       let pages = Math.floor((contentH - EPS) / pageHeightPx) + 1;
       pages = Math.max(1, pages);
+
+      // Subtract 1px from the snapped height to avoid rounding spillover that can add a blank page
       const snapped = pages * pageHeightPx - 1;
       wrapper.style.minHeight = `${snapped}px`;
     };
@@ -484,271 +490,268 @@ const CVPreview = ({
       <>
         {styleBlock}
         <div className="cv-page">
-          {/* Enforce consistent vertical rhythm across header + sections */}
-          <div className="space-y-6">
-            {/* Header (no extra pb/mb here) */}
-            <div className={`${template.id === "minimal" ? styles.headerStyle : ""} text-center`}>
-              {template.id !== "minimal" && template.id !== "modern-bullets" && (
-                <div className={`${styles.headerStyle} text-white p-6 rounded-lg shadow-md`}>
-                  {template.hasPhoto && (
-                    <img
-                      src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
-                      alt="Profile"
-                      className="w-32 h-32 aspect-square rounded-full mx-auto object-cover object-center border-4 border-white/20 mb-4 shadow-lg flex-shrink-0"
-                    />
-                  )}
-                  <h1 className="text-3xl font-bold mb-2">{data.personalInfo.fullName || "Your Name"}</h1>
-                  <p className="text-xl opacity-90">{data.personalInfo.jobTitle || "Your Job Title"}</p>
+          {/* Header */}
+          <div className={`${template.id === "minimal" ? styles.headerStyle + " pb-6" : "pb-6"} text-center`}>
+            {template.id !== "minimal" && template.id !== "modern-bullets" && (
+              <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-6 shadow-md`}>
+                {template.hasPhoto && (
+                  <img
+                    src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
+                    alt="Profile"
+                    className="w-32 h-32 aspect-square rounded-full mx-auto object-cover object-center border-4 border-white/20 mb-4 shadow-lg flex-shrink-0"
+                  />
+                )}
+                <h1 className="text-3xl font-bold mb-2">{data.personalInfo.fullName || "Your Name"}</h1>
+                <p className="text-xl opacity-90">{data.personalInfo.jobTitle || "Your Job Title"}</p>
+              </div>
+            )}
+            {template.id === "modern-bullets" && (
+              <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-6 shadow-md`}>
+                {template.hasPhoto && (
+                  <img
+                    src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
+                    alt="Profile"
+                    className="w-32 h-32 aspect-square rounded-full mx-auto object-cover object-center border-4 border-white/20 mb-4 shadow-lg flex-shrink-0"
+                  />
+                )}
+                <h1 className="text-3xl font-bold mb-2">{data.personalInfo.fullName || "Your Name"}</h1>
+                <p className="text-xl opacity-90">{data.personalInfo.jobTitle || "Your Job Title"}</p>
+              </div>
+            )}
+            {template.id === "minimal" && (
+              <>
+                {template.hasPhoto && (
+                  <img
+                    src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
+                    alt="Profile"
+                    className={`w-32 h-32 aspect-square rounded-full mx-auto object-cover object-center border-4 ${styles.borderColor}/20 mb-4 shadow-md flex-shrink-0`}
+                  />
+                )}
+                <h1 className={`text-3xl font-bold ${styles.primaryColor} mb-2`}>
+                  {data.personalInfo.fullName || "Your Name"}
+                </h1>
+                <p className="text-xl text-muted-foreground">{data.personalInfo.jobTitle || "Your Job Title"}</p>
+              </>
+            )}
+          </div>
+
+          {/* Contact Information */}
+          <div className="avoid-break mb-8">
+            <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
+              Contact Information
+            </h3>
+            <div className="flex flex-wrap gap-6">
+              {data.personalInfo.email && (
+                <div className="flex items-center gap-3 text-muted-foreground">
+                  <Mail className={`w-4 h-4 flex-shrink-0 ${styles.primaryColor}`} />
+                  <span className="break-all">{data.personalInfo.email}</span>
                 </div>
               )}
-              {template.id === "modern-bullets" && (
-                <div className={`${styles.headerStyle} text-white p-6 rounded-lg shadow-md`}>
-                  {template.hasPhoto && (
-                    <img
-                      src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
-                      alt="Profile"
-                      className="w-32 h-32 aspect-square rounded-full mx-auto object-cover object-center border-4 border-white/20 mb-4 shadow-lg flex-shrink-0"
-                    />
-                  )}
-                  <h1 className="text-3xl font-bold mb-2">{data.personalInfo.fullName || "Your Name"}</h1>
-                  <p className="text-xl opacity-90">{data.personalInfo.jobTitle || "Your Job Title"}</p>
+              {data.personalInfo.phone && (
+                <div className="flex items-center gap-3 text-muted-foreground">
+                  <Phone className={`w-4 h-4 flex-shrink-0 ${styles.primaryColor}`} />
+                  <span>{data.personalInfo.phone}</span>
                 </div>
               )}
-              {template.id === "minimal" && (
-                <>
-                  {template.hasPhoto && (
-                    <img
-                      src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
-                      alt="Profile"
-                      className={`w-32 h-32 aspect-square rounded-full mx-auto object-cover object-center border-4 ${styles.borderColor}/20 mb-4 shadow-md flex-shrink-0`}
-                    />
-                  )}
-                  <h1 className={`text-3xl font-bold ${styles.primaryColor} mb-2`}>
-                    {data.personalInfo.fullName || "Your Name"}
-                  </h1>
-                  <p className="text-xl text-muted-foreground">{data.personalInfo.jobTitle || "Your Job Title"}</p>
-                </>
+              {(data.personalInfo.address || data.personalInfo.city || data.personalInfo.provinceState || data.personalInfo.postcode) && (
+                <div className="flex items-center gap-3 text-muted-foreground">
+                  <MapPin className={`w-4 h-4 flex-shrink-0 ${styles.primaryColor}`} />
+                  <span>
+                    {[
+                      data.personalInfo.address,
+                      data.personalInfo.city && data.personalInfo.provinceState && data.personalInfo.postcode
+                        ? `${data.personalInfo.city}, ${data.personalInfo.provinceState} ${data.personalInfo.postcode}`
+                        : [data.personalInfo.city, data.personalInfo.provinceState, data.personalInfo.postcode].filter(Boolean).join(', ')
+                    ].filter(Boolean).join(', ')}
+                  </span>
+                </div>
+              )}
+              {data.personalInfo.website && (
+                <div className="flex items-center gap-3 text-muted-foreground">
+                  <Globe className={`w-4 h-4 flex-shrink-0 ${styles.primaryColor}`} />
+                  <span className="break-all">{data.personalInfo.website}</span>
+                </div>
               )}
             </div>
+          </div>
 
-            {/* Contact Information (removed mb-8) */}
-            <div className="avoid-break">
+          {/* Summary */}
+          {data.summary && (
+            <div className="avoid-break mb-8">
               <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
-                Contact Information
+                Professional Summary
               </h3>
-              <div className="flex flex-wrap gap-6">
-                {data.personalInfo.email && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Mail className={`w-4 h-4 flex-shrink-0 ${styles.primaryColor}`} />
-                    <span className="break-all">{data.personalInfo.email}</span>
-                  </div>
-                )}
-                {data.personalInfo.phone && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Phone className={`w-4 h-4 flex-shrink-0 ${styles.primaryColor}`} />
-                    <span>{data.personalInfo.phone}</span>
-                  </div>
-                )}
-                {(data.personalInfo.address || data.personalInfo.city || data.personalInfo.provinceState || data.personalInfo.postcode) && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <MapPin className={`w-4 h-4 flex-shrink-0 ${styles.primaryColor}`} />
-                    <span>
-                      {[
-                        data.personalInfo.address,
-                        data.personalInfo.city && data.personalInfo.provinceState && data.personalInfo.postcode
-                          ? `${data.personalInfo.city}, ${data.personalInfo.provinceState} ${data.personalInfo.postcode}`
-                          : [data.personalInfo.city, data.personalInfo.provinceState, data.personalInfo.postcode].filter(Boolean).join(', ')
-                      ].filter(Boolean).join(', ')}
-                    </span>
-                  </div>
-                )}
-                {data.personalInfo.website && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Globe className={`w-4 h-4 flex-shrink-0 ${styles.primaryColor}`} />
-                    <span className="break-all">{data.personalInfo.website}</span>
-                  </div>
-                )}
-              </div>
+              <p className="text-muted-foreground leading-relaxed text-justify">{data.summary}</p>
             </div>
+          )}
 
-            {/* Summary */}
-            {data.summary && (
-              <div className="avoid-break">
-                <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
-                  Professional Summary
-                </h3>
-                <p className="text-muted-foreground leading-relaxed text-justify">{data.summary}</p>
-              </div>
-            )}
-
-            {/* Work Experience */}
-            {data.workExperience.length > 0 && (
-              <div className="avoid-break">
-                <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
-                  Work Experience
-                </h3>
-                <div className="space-y-6">
-                  {data.workExperience.map((exp) => (
-                    <div key={exp.id} className="avoid-break-item relative">
-                      {template.id === "creative" && (
-                        <div className={`absolute left-0 top-0 w-1 h-full ${styles.accentColor} rounded-full`} />
-                      )}
-                      <div className={`${template.id === "creative" ? "pl-4" : ""}`}>
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <h4 className="font-semibold text-foreground text-base">{exp.jobTitle}</h4>
-                            <p className={`font-medium ${styles.primaryColor}`}>{exp.company}</p>
-                          </div>
-                          <div className="text-right text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="w-4 h-4" />
-                              {formatDate(exp.startDate)} - {exp.current ? "Present" : formatDate(exp.endDate)}
-                            </div>
-                          </div>
-                        </div>
-                        {exp.responsibilities && exp.responsibilities.trim().length > 0 && (
-                          <div
-                            className="text-muted-foreground space-y-1 ml-4 prose prose-sm max-w-none [&>ul]:list-disc [&>ul]:list-inside [&>ol]:list-decimal [&>ol]:list-inside [&>ul]:space-y-1 [&>ol]:space-y-1 [&>p]:mb-2 [&>strong]:font-semibold [&>em]:italic"
-                            dangerouslySetInnerHTML={{ __html: exp.responsibilities }}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Education */}
-            {data.education.length > 0 && (
-              <div className="avoid-break">
-                <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
-                  Education
-                </h3>
-                <div className="space-y-4">
-                  {data.education.map((edu) => (
-                    <div key={edu.id} className="avoid-break-item">
-                      <div className="flex justify-between items-start">
+          {/* Work Experience */}
+          {data.workExperience.length > 0 && (
+            <div className="avoid-break mb-8">
+              <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
+                Work Experience
+              </h3>
+              <div className="space-y-6">
+                {data.workExperience.map((exp) => (
+                  <div key={exp.id} className="avoid-break-item relative">
+                    {template.id === "creative" && (
+                      <div className={`absolute left-0 top-0 w-1 h-full ${styles.accentColor} rounded-full`} />
+                    )}
+                    <div className={`${template.id === "creative" ? "pl-4" : ""}`}>
+                      <div className="flex justify-between items-start mb-2">
                         <div>
-                          <h4 className="font-semibold text-foreground">{edu.degree}</h4>
-                          <p className={`font-medium ${styles.primaryColor}`}>{edu.institution}</p>
-                          {edu.fieldOfStudy && (
-                            <p className="text-sm text-muted-foreground">{edu.fieldOfStudy}</p>
-                          )}
+                          <h4 className="font-semibold text-foreground text-base">{exp.jobTitle}</h4>
+                          <p className={`font-medium ${styles.primaryColor}`}>{exp.company}</p>
                         </div>
                         <div className="text-right text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
+                            {formatDate(exp.startDate)} - {exp.current ? "Present" : formatDate(exp.endDate)}
                           </div>
                         </div>
                       </div>
+                      {exp.responsibilities && exp.responsibilities.trim().length > 0 && (
+                        <div
+                          className="text-muted-foreground space-y-1 ml-4 prose prose-sm max-w-none [&>ul]:list-disc [&>ul]:list-inside [&>ol]:list-decimal [&>ol]:list-inside [&>ul]:space-y-1 [&>ol]:space-y-1 [&>p]:mb-2 [&>strong]:font-semibold [&>em]:italic"
+                          dangerouslySetInnerHTML={{ __html: exp.responsibilities }}
+                        />
+                      )}
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Skills */}
-            {data.skills.length > 0 && (
-              <div className="avoid-break">
-                <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
-                  Skills
-                </h3>
-                {template.id === "modern-bullets" ? (
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-center">
-                    {data.skills.map((skill) => (
-                      <div key={skill.id} className="flex items-center justify-center gap-2">
-                        <span className={`${styles.primaryColor} font-medium`}>•</span>
-                        <span className="font-medium text-foreground">{skill.name}</span>
-                      </div>
-                    ))}
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    {data.skills.map((skill) => (
-                      <div key={skill.id}>
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="font-medium">{skill.name}</span>
-                          <span className="text-sm text-muted-foreground">{skill.level}</span>
-                        </div>
-                        <div className="w-full bg-muted/50 rounded-full h-2">
-                          <div
-                            className={`${styles.skillBar} h-2 rounded-full transition-all duration-500`}
-                            style={{ width: `${getSkillLevel(skill.level)}%` }}
-                          />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Education */}
+          {data.education.length > 0 && (
+            <div className="avoid-break mb-8">
+              <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
+                Education
+              </h3>
+              <div className="space-y-4">
+                {data.education.map((edu) => (
+                  <div key={edu.id} className="avoid-break-item">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-semibold text-foreground">{edu.degree}</h4>
+                        <p className={`font-medium ${styles.primaryColor}`}>{edu.institution}</p>
+                        {edu.fieldOfStudy && (
+                          <p className="text-sm text-muted-foreground">{edu.fieldOfStudy}</p>
+                        )}
+                      </div>
+                      <div className="text-right text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" />
+                          {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
                         </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
-                )}
+                ))}
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Languages */}
-            {data.languages.length > 0 && (
-              <div className="avoid-break">
-                <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
-                  Languages
-                </h3>
-                <div className="space-y-2">
-                  {data.languages.map((lang) => (
-                    <div key={lang.id} className="flex items-center justify-between">
-                      <span className="font-medium">{lang.name}</span>
-                      <span className="text-sm text-muted-foreground">{lang.proficiency}</span>
+          {/* Skills */}
+          {data.skills.length > 0 && (
+            <div className="avoid-break mb-8">
+              <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
+                Skills
+              </h3>
+              {template.id === "modern-bullets" ? (
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-center">
+                  {data.skills.map((skill) => (
+                    <div key={skill.id} className="flex items-center justify-center gap-2">
+                      <span className={`${styles.primaryColor} font-medium`}>•</span>
+                      <span className="font-medium text-foreground">{skill.name}</span>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
-
-            {/* Certifications */}
-            {data.certifications.length > 0 && (
-              <div className="avoid-break">
-                <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
-                  Certifications
-                </h3>
+              ) : (
                 <div className="space-y-3">
-                  {data.certifications.map((cert) => (
-                    <div key={cert.id} className="avoid-break-item">
-                      <div className="flex items-start gap-2">
-                        <Award className={`w-4 h-4 flex-shrink-0 mt-0.5 ${styles.primaryColor}`} />
-                        <div>
-                          <div className="font-medium text-foreground">{cert.name}</div>
-                          <div className="text-sm text-muted-foreground">{cert.issuer}</div>
-                          <div className="text-sm text-muted-foreground">{formatDate(cert.date)}</div>
-                        </div>
+                  {data.skills.map((skill) => (
+                    <div key={skill.id}>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-medium">{skill.name}</span>
+                        <span className="text-sm text-muted-foreground">{skill.level}</span>
+                      </div>
+                      <div className="w-full bg-muted/50 rounded-full h-2">
+                        <div
+                          className={`${styles.skillBar} h-2 rounded-full transition-all duration-500`}
+                          style={{ width: `${getSkillLevel(skill.level)}%` }}
+                        />
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+          )}
 
-            {/* References */}
-            {data.references.length > 0 && (
-              <div className="avoid-break">
-                <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
-                  References
-                </h3>
-                <div className="space-y-3">
-                  {data.references.map((ref) => (
-                    <div key={ref.id} className="avoid-break-item">
-                      <div className="flex items-start gap-2">
-                        <Users className={`w-4 h-4 flex-shrink-0 mt-0.5 ${styles.primaryColor}`} />
-                        <div>
-                          <div className="font-medium text-foreground">{ref.name}</div>
-                          <div className="text-sm text-muted-foreground">{ref.organization}</div>
-                          <div className="text-sm text-muted-foreground">{ref.email}</div>
-                          <div className="text-sm text-muted-foreground">{ref.phone}</div>
-                        </div>
+          {/* Languages */}
+          {data.languages.length > 0 && (
+            <div className="avoid-break mb-8">
+              <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
+                Languages
+              </h3>
+              <div className="space-y-2">
+                {data.languages.map((lang) => (
+                  <div key={lang.id} className="flex items-center justify-between">
+                    <span className="font-medium">{lang.name}</span>
+                    <span className="text-sm text-muted-foreground">{lang.proficiency}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Certifications */}
+          {data.certifications.length > 0 && (
+            <div className="avoid-break mb-8">
+              <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
+                Certifications
+              </h3>
+              <div className="space-y-3">
+                {data.certifications.map((cert) => (
+                  <div key={cert.id} className="avoid-break-item">
+                    <div className="flex items-start gap-2">
+                      <Award className={`w-4 h-4 flex-shrink-0 mt-0.5 ${styles.primaryColor}`} />
+                      <div>
+                        <div className="font-medium text-foreground">{cert.name}</div>
+                        <div className="text-sm text-muted-foreground">{cert.issuer}</div>
+                        <div className="text-sm text-muted-foreground">{formatDate(cert.date)}</div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* References */}
+          {data.references.length > 0 && (
+            <div className="avoid-break">
+              <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
+                References
+              </h3>
+              <div className="space-y-3">
+                {data.references.map((ref) => (
+                  <div key={ref.id} className="avoid-break-item">
+                    <div className="flex items-start gap-2">
+                      <Users className={`w-4 h-4 flex-shrink-0 mt-0.5 ${styles.primaryColor}`} />
+                      <div>
+                        <div className="font-medium text-foreground">{ref.name}</div>
+                        <div className="text-sm text-muted-foreground">{ref.organization}</div>
+                        <div className="text-sm text-muted-foreground">{ref.email}</div>
+                        <div className="text-sm text-muted-foreground">{ref.phone}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </>
     );
@@ -756,7 +759,7 @@ const CVPreview = ({
     return <div style={colorVars}>{content}</div>;
   }
 
-  // ---------- SINGLE COLUMN (non-PDF: unbounded/fixed preview) ----------
+  // Non-PDF (unbounded mode or fixed A4 preview)
   const wrapperClass = unbounded
     ? `${isPDF ? "bg-white" : "bg-background border border-border rounded-lg shadow-card"} ${isPreview ? "text-xs" : "text-sm"}`
     : `cv-a4 ${isPDF ? "bg-white" : "bg-background"} ${isPDF ? "" : "border border-border rounded-lg shadow-card"} overflow-hidden ${isPreview ? "text-xs" : "text-sm"}`;
@@ -774,10 +777,10 @@ const CVPreview = ({
         ref={unbounded ? innerRef : undefined}
         className="p-8 space-y-6"
       >
-        {/* Header (no extra pb on wrapper; no mb on card) */}
-        <div className={`${template.id === "minimal" ? styles.headerStyle : ""} text-center`}>
+        {/* Header */}
+        <div className={`${template.id === "minimal" ? styles.headerStyle + " pb-6" : "pb-6"} text-center`}>
           {template.id !== "minimal" && template.id !== "modern-bullets" && (
-            <div className={`${styles.headerStyle} text-white p-6 rounded-lg shadow-md`}>
+            <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-6 shadow-md`}>
               {template.hasPhoto && (
                 <img
                   src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
@@ -790,7 +793,7 @@ const CVPreview = ({
             </div>
           )}
           {template.id === "modern-bullets" && (
-            <div className={`${styles.headerStyle} text-white p-6 rounded-lg shadow-md`}>
+            <div className={`${styles.headerStyle} text-white p-6 rounded-lg mb-6 shadow-md`}>
               {template.hasPhoto && (
                 <img
                   src={data.personalInfo.photoUrl || DEFAULT_AVATAR_URL}
@@ -819,8 +822,8 @@ const CVPreview = ({
           )}
         </div>
 
-        {/* Contact Information (removed mb-8) */}
-        <div className="avoid-break">
+        {/* Contact Information */}
+        <div className="avoid-break mb-8">
           <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
             Contact Information
           </h3>
