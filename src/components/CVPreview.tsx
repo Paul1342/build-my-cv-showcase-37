@@ -585,6 +585,42 @@ const CVPreview = ({
             </div>
           )}
 
+          {/* Skills */}
+          {data.skills.length > 0 && (
+            <div className="avoid-break mb-8">
+              <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
+                Skills
+              </h3>
+              {template.id === "modern-bullets" ? (
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-center">
+                  {data.skills.map((skill) => (
+                    <div key={skill.id} className="flex items-center justify-center gap-2">
+                      <span className={`${styles.primaryColor} font-medium`}>•</span>
+                      <span className="font-medium text-foreground">{skill.name}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {data.skills.map((skill) => (
+                    <div key={skill.id}>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-medium">{skill.name}</span>
+                        <span className="text-sm text-muted-foreground">{skill.level}</span>
+                      </div>
+                      <div className="w-full bg-muted/50 rounded-full h-2">
+                        <div
+                          className={`${styles.skillBar} h-2 rounded-full transition-all duration-500`}
+                          style={{ width: `${getSkillLevel(skill.level)}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Work Experience */}
           {data.workExperience.length > 0 && (
             <div className="avoid-break mb-8">
@@ -653,41 +689,6 @@ const CVPreview = ({
             </div>
           )}
 
-          {/* Skills */}
-          {data.skills.length > 0 && (
-            <div className="avoid-break mb-8">
-              <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
-                Skills
-              </h3>
-              {template.id === "modern-bullets" ? (
-                <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-center">
-                  {data.skills.map((skill) => (
-                    <div key={skill.id} className="flex items-center justify-center gap-2">
-                      <span className={`${styles.primaryColor} font-medium`}>•</span>
-                      <span className="font-medium text-foreground">{skill.name}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {data.skills.map((skill) => (
-                    <div key={skill.id}>
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-medium">{skill.name}</span>
-                        <span className="text-sm text-muted-foreground">{skill.level}</span>
-                      </div>
-                      <div className="w-full bg-muted/50 rounded-full h-2">
-                        <div
-                          className={`${styles.skillBar} h-2 rounded-full transition-all duration-500`}
-                          style={{ width: `${getSkillLevel(skill.level)}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
 
           {/* Languages */}
           {data.languages.length > 0 && (
@@ -872,6 +873,42 @@ const CVPreview = ({
           </div>
         )}
 
+        {/* Skills */}
+        {data.skills.length > 0 && (
+          <div className="avoid-break">
+            <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
+              Skills
+            </h3>
+            {template.id === "modern-bullets" ? (
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-center">
+                {data.skills.map((skill) => (
+                  <div key={skill.id} className="flex items-center justify-center gap-2">
+                    <span className={`${styles.primaryColor} font-medium`}>•</span>
+                    <span className="font-medium text-foreground">{skill.name}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {data.skills.map((skill) => (
+                  <div key={skill.id}>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="font-medium">{skill.name}</span>
+                      <span className="text-sm text-muted-foreground">{skill.level}</span>
+                    </div>
+                    <div className="w-full bg-muted/50 rounded-full h-2">
+                      <div
+                        className={`${styles.skillBar} h-2 rounded-full transition-all duration-500`}
+                        style={{ width: `${getSkillLevel(skill.level)}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Work Experience */}
         {data.workExperience.length > 0 && (
           <div className="avoid-break">
@@ -940,41 +977,6 @@ const CVPreview = ({
           </div>
         )}
 
-        {/* Skills */}
-        {data.skills.length > 0 && (
-          <div className="avoid-break">
-            <h3 className={`font-semibold ${styles.primaryColor} mb-4 text-lg border-b ${styles.borderColor}/30 pb-2`}>
-              Skills
-            </h3>
-            {template.id === "modern-bullets" ? (
-              <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-center">
-                {data.skills.map((skill) => (
-                  <div key={skill.id} className="flex items-center justify-center gap-2">
-                    <span className={`${styles.primaryColor} font-medium`}>•</span>
-                    <span className="font-medium text-foreground">{skill.name}</span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {data.skills.map((skill) => (
-                  <div key={skill.id}>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="font-medium">{skill.name}</span>
-                      <span className="text-sm text-muted-foreground">{skill.level}</span>
-                    </div>
-                    <div className="w-full bg-muted/50 rounded-full h-2">
-                      <div
-                        className={`${styles.skillBar} h-2 rounded-full transition-all duration-500`}
-                        style={{ width: `${getSkillLevel(skill.level)}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Languages */}
         {data.languages.length > 0 && (
